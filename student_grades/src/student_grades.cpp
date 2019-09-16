@@ -17,11 +17,12 @@ using std::vector;
 int median();
 int average();
 void quartiles();
+double grade(double, double, double);
 
 int main() {
-	// return average();
+	return average();
 	// return median();
-	quartiles();
+	// quartiles();
 	return 0;
 }
 
@@ -61,7 +62,7 @@ int average() {
 	// write the result
 	streamsize prec = cout.precision();
 	cout << "Your final grade is " << setprecision(3)
-		<< 0.2 * midterm + 0.4 * final + 0.4 * sum / count
+		<< grade(midterm, final, sum / count)
 		<< setprecision(prec) << endl;
 
 	return 0;
@@ -160,4 +161,9 @@ void quartiles() {
 	}
 	streamsize prec = cout.precision();
 	cout << setprecision(3) << q1 << " " << q2 << " " << q3 << setprecision(prec) << endl;
+}
+
+// compute a student's overall grade from midterm and final exam grades and homework grade
+double grade(double midterm, double final, double homework) {
+	return  0.2 * midterm + 0.4 * final + 0.4 * homework;
 }
