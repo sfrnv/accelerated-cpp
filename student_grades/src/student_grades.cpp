@@ -14,19 +14,20 @@ using std::string;
 using std::setprecision;
 using std::vector;
 
-int median();
-int average();
+int f1();
+int f2();
 void quartiles();
 double grade(double, double, double);
+double median(vector<double>);
 
 int main() {
-	return average();
-	// return median();
+	return f1();
+	// return f2();
 	// quartiles();
 	return 0;
 }
 
-int average() {
+int f1() {
 
 	// ask for and read the student's name
 	cout << "Please enter your first name: ";
@@ -68,7 +69,7 @@ int average() {
 	return 0;
 }
 
-int median() {
+int f2() {
 
 	// ask for and read the student's name
 	cout << "Please enter your first name: ";
@@ -166,4 +167,20 @@ void quartiles() {
 // compute a student's overall grade from midterm and final exam grades and homework grade
 double grade(double midterm, double final, double homework) {
 	return  0.2 * midterm + 0.4 * final + 0.4 * homework;
+}
+
+// compute the median of a vector<double>
+// note that calling this function copies the entire argument vector
+double median(vector<double> vec) {
+	typedef vector<double>::size_type vec_sz;
+
+	vec_sz size = vec.size();
+
+	if (size == 0)
+		throw domain_error("median of an empty vector");
+
+	sort(vec.begin(), vec.end());
+	
+	vec_sz mid =  size / 2;
+	return size % 2 == 0 ? (vec[mid] + vec[mid-1]) / 2 : vec[mid];
 }
