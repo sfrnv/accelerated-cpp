@@ -19,6 +19,9 @@ using std::string;
 using std::max;
 using std::vector;
 
+bool fgrade(const Student_info&);
+vector<Student_info> extract_fails(vector<Student_info>&);
+
 int main() {
 	vector<Student_info> students;
 	Student_info record;
@@ -35,6 +38,7 @@ int main() {
 
 	// alphabetize the student records
 	sort(students.begin(), students.end(), compare);
+	extract_fails(students);
 
 	// write the names and grades
 	for (vector<Student_info>::size_type i = 0; i != students.size(); ++i) {
@@ -60,19 +64,17 @@ bool fgrade(const Student_info& s) {
 	return grade(s) < 60;
 }
 
-// second try: correct but potentially slow
+// version 3: iterators but no indexing; still potentially slow
 vector<Student_info> extract_fails(vector<Student_info>& students) {
 	vector<Student_info> fail;
-	vector<Student_info>::size_type i = 0;
-
-	// invariant:elements [0, i) of students represent passing grades
-	while (i != students.size()) {
-		if (fgrade(students[i])) {
-			fail.push_back(students[i]);
-			students.erase(students.begin() + i);
+	vector<Student_info>::iterator iter = students.begin();
+	while (iter != students.end()) {
+		if (fgrade(*iter)) {
+			fail.push_back(*iter);
+			iter = students.erase(iter);
 		} else
-			++i;
-	}
-	
+			++iter;
+		}
+
 	return fail;
 }
