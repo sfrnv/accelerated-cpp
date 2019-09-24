@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <list>
 #include "grade.h"
 #include "student_info.h"
 
@@ -18,9 +19,14 @@ using std::endl;
 using std::string;
 using std::max;
 using std::vector;
+using std::list;
+
+bool fgrade(const Student_info&);
+vector<Student_info> extract_fails(vector<Student_info>&);
+list<Student_info> extract_fails(list<Student_info>&);
 
 int main() {
-	vector<Student_info> students;
+	list<Student_info> students;
 	Student_info record;
 	string::size_type maxlen = 0;       // the length of the longest name
 
@@ -34,16 +40,18 @@ int main() {
 	}
 
 	// alphabetize the student records
-	sort(students.begin(), students.end(), compare);
+	students.sort(compare);
+	extract_fails(students);
 
 	// write the names and grades
-	for (vector<Student_info>::size_type i = 0; i != students.size(); ++i) {
+	list<Student_info>::iterator iter = students.begin();
+	while (iter != students.end()) {
 		// write the name, padded on the right to maxlen + 1 characters
-		cout << students[i].name
-			<< string(maxlen + 1 - students[i].name.size(), ' ');
+		cout << iter->name
+			<< string(maxlen + 1 - iter->name.size(), ' ');
 		// compute and write the grade
 		try {
-			double final_grade = grade(students[i]);
+			double final_grade = grade(*iter);
 			streamsize prec = cout.precision();
 			cout << setprecision(3) << final_grade
 				<< setprecision(prec);
@@ -51,6 +59,42 @@ int main() {
 			cout << e.what();
 		}
 		cout << endl;
+		++iter;
 	}
 	return 0;
+}
+
+// predicate to determine whether a student failed
+bool fgrade(const Student_info& s) {
+	return grade(s) < 60;
+}
+
+// version 3: iterators but no indexing; still potentially slow
+vector<Student_info> extract_fails(vector<Student_info>& students) {
+	vector<Student_info> fail;
+	vector<Student_info>::iterator iter = students.begin();
+	while (iter != students.end()) {
+		if (fgrade(*iter)) {
+			fail.push_back(*iter);
+			iter = students.erase(iter);
+		} else
+			++iter;
+		}
+
+	return fail;
+}
+
+// version 4: use list instead of vector
+list<Student_info> extract_fails(list<Student_info>& students) {
+	list<Student_info> fail;
+	list<Student_info>::iterator iter = students.begin();
+	while (iter != students.end()) {
+		if (fgrade(*iter)) {
+			fail.push_back(*iter);
+			iter = students.erase(iter);
+		} else
+			++iter;
+	}
+
+	return fail;
 }
