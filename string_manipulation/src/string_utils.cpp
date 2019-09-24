@@ -5,6 +5,7 @@
 using std::string;
 using std::vector;
 
+// Breaks a line of input into words, separated from each other by whitespace
 vector<string> split(const string& s) {
 	vector<string> ret;
 	typedef string::size_type string_size;
@@ -30,4 +31,12 @@ vector<string> split(const string& s) {
 		}
 	}
 	return ret;
+}
+
+// Finds longest string in the vector
+string::size_type width(const vector<string>& v) {
+    string::size_type maxlen = 0;
+    for (vector<string>::size_type i = 0; i != v.size(); ++i)
+    	maxlen  = max(maxlen, v[i].size());
+    return maxlen;
 }
