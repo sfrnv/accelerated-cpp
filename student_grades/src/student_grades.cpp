@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include <list>
 #include "grade.h"
 #include "student_info.h"
 
@@ -18,6 +19,7 @@ using std::endl;
 using std::string;
 using std::max;
 using std::vector;
+using std::list;
 
 bool fgrade(const Student_info&);
 vector<Student_info> extract_fails(vector<Student_info>&);
@@ -75,6 +77,21 @@ vector<Student_info> extract_fails(vector<Student_info>& students) {
 		} else
 			++iter;
 		}
+
+	return fail;
+}
+
+// version 4: use list instead of vector
+list<Student_info> extract_fails(list<Student_info>& students) {
+	list<Student_info> fail;
+	list<Student_info>::iterator iter = students.begin();
+	while (iter != students.end()) {
+		if (fgrade(*iter)) {
+			fail.push_back(*iter);
+			iter = students.erase(iter);
+		} else
+			++iter;
+	}
 
 	return fail;
 }
