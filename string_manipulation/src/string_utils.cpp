@@ -59,3 +59,15 @@ vector<string> frame(const vector<string>& v) {
 	ret.push_back(border);
 	return ret;
 }
+
+// Vertical vector concatenation
+vector<string> vcat(const vector<string>& top, const vector<string>& bottom) {
+	// copy the top picture
+	vector<string> ret = top;
+
+	// copy entire bottom picture
+	for (vector<string>::const_iterator i = bottom.begin(); i != bottom.end(); ++i)
+		ret.push_back(*i);
+
+	return ret;
+}
