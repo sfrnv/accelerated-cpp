@@ -5,5 +5,7 @@
 #include <vector>
 
 std::vector<std::string> split(const std::string&);
+std::string::size_type width(const std::vector<std::string>&);
+std::vector<std::string> frame(const std::vector<std::string>&);
 
 #endif

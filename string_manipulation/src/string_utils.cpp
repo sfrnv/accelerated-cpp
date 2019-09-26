@@ -4,6 +4,7 @@
 
 using std::string;
 using std::vector;
+using std::max;
 
 // Breaks a line of input into words, separated from each other by whitespace
 vector<string> split(const string& s) {
@@ -37,6 +38,24 @@ vector<string> split(const string& s) {
 string::size_type width(const vector<string>& v) {
     string::size_type maxlen = 0;
     for (vector<string>::size_type i = 0; i != v.size(); ++i)
-    	maxlen  = max(maxlen, v[i].size());
+    	maxlen = max(maxlen, v[i].size());
     return maxlen;
+}
+
+// Puts strings in the vector in a box of asterisks
+vector<string> frame(const vector<string>& v) {
+	vector<string> ret;
+	string::size_type maxlen = width(v);
+	string border(maxlen + 4, '*');
+
+	// write the top border
+	ret.push_back(border);
+
+	// write each interior row, bordered by an asterisk and space
+	for (vector<string>::size_type i = 0; i != v.size(); ++i)
+		ret.push_back("* " + v[i] + string(maxlen - v[i].size(), ' ') + " *");
+
+	//write the bottom border
+	ret.push_back(border);
+	return ret;
 }
