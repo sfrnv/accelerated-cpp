@@ -79,11 +79,11 @@ bool pgrade(const Student_info& s) {
 	return !fgrade(s);
 }
 
-// version 3.1: use remove_copy_if function to copy the failling grades into fail
+// version 3.2: use stable_partition function to rearrange the elements
 vector<Student_info> extract_fails(vector<Student_info>& students) {
-	vector<Student_info> fail;
-	remove_copy_if(students.begin(), students.end(), back_inserter(fail), pgrade);
-	students.erase(remove_if(students.begin(), students.end(), fgrade), students.end());
+	vector<Student_info>::iterator iter = stable_partition(students.begin(), students.end(), pgrade);
+	vector<Student_info> fail(iter, students.end());
+	students.erase(iter, students.end());
 	return fail;
 }
 
