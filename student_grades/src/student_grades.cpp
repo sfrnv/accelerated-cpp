@@ -23,13 +23,14 @@ using std::vector;
 using std::list;
 
 bool fgrade(const Student_info&);
+bool pgrade(const Student_info&);
 vector<Student_info> extract_fails(vector<Student_info>&);
 list<Student_info> extract_fails(list<Student_info>&);
 int alt_main();
 
 int main() {
 	//return alt_main();
-	list<Student_info> students;
+	vector<Student_info> students;
 	Student_info record;
 	string::size_type maxlen = 0;       // the length of the longest name
 
@@ -43,11 +44,12 @@ int main() {
 	}
 
 	// alphabetize the student records
-	students.sort(compare);
+	// students.sort(compare);
+	sort(students.begin(), students.end(), compare);
 	extract_fails(students);
 
 	// write the names and grades
-	list<Student_info>::iterator iter = students.begin();
+	vector<Student_info>::iterator iter = students.begin();
 	while (iter != students.end()) {
 		// write the name, padded on the right to maxlen + 1 characters
 		cout << iter->name
@@ -72,18 +74,16 @@ bool fgrade(const Student_info& s) {
 	return grade(s) < 60;
 }
 
-// version 3: iterators but no indexing; still potentially slow
+// predicate that inverts the result of calling fgrade 
+bool pgrade(const Student_info& s) {
+	return !fgrade(s);
+}
+
+// version 3.1: use remove_copy_if function to copy the failling grades into fail
 vector<Student_info> extract_fails(vector<Student_info>& students) {
 	vector<Student_info> fail;
-	vector<Student_info>::iterator iter = students.begin();
-	while (iter != students.end()) {
-		if (fgrade(*iter)) {
-			fail.push_back(*iter);
-			iter = students.erase(iter);
-		} else
-			++iter;
-		}
-
+	remove_copy_if(students.begin(), students.end(), back_inserter(fail), pgrade);
+	students.erase(remove_if(students.begin(), students.end(), fgrade), students.end());
 	return fail;
 }
 
