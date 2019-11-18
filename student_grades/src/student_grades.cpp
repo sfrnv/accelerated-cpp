@@ -8,6 +8,7 @@
 #include <list>
 #include "grade.h"
 #include "student_info.h"
+#include "analysis.h"
 
 using std::cin;
 using std::setprecision;
@@ -24,8 +25,10 @@ using std::list;
 bool fgrade(const Student_info&);
 vector<Student_info> extract_fails(vector<Student_info>&);
 list<Student_info> extract_fails(list<Student_info>&);
+int alt_main();
 
 int main() {
+	//return alt_main();
 	list<Student_info> students;
 	Student_info record;
 	string::size_type maxlen = 0;       // the length of the longest name
@@ -97,4 +100,34 @@ list<Student_info> extract_fails(list<Student_info>& students) {
 	}
 
 	return fail;
+}
+
+int alt_main() {
+	// students who did and didn't do all their homework
+	vector<Student_info> did, didnt;
+
+	// read the student records and partition them
+	Student_info student;
+	while (read(cin, student)) {
+		if (did_all_hw(student))
+			did.push_back(student);
+		else
+			didnt.push_back(student);
+	}
+
+	// verify that the analyses will show us something
+	if (did.empty()) {
+		cout << "No student did all the homework" << endl;
+		return 1;
+	}
+	if (didnt.empty()) {
+		cout << "Every student did all the homework" << endl;
+		return 1;
+	}
+
+	// do the analyses
+	write_analysis(cout, "median", median_analysis, did, didnt);
+	write_analysis(cout, "average", average_analysis, did, didnt);
+	write_analysis(cout, "median of homework turned in", optimistic_median_analysis, did, didnt);
+	return 0;
 }
