@@ -8,6 +8,7 @@
 #include <list>
 #include "grade.h"
 #include "student_info.h"
+#include "analysis.h"
 
 using std::cin;
 using std::setprecision;
@@ -22,11 +23,14 @@ using std::vector;
 using std::list;
 
 bool fgrade(const Student_info&);
+bool pgrade(const Student_info&);
 vector<Student_info> extract_fails(vector<Student_info>&);
 list<Student_info> extract_fails(list<Student_info>&);
+int alt_main();
 
 int main() {
-	list<Student_info> students;
+	//return alt_main();
+	vector<Student_info> students;
 	Student_info record;
 	string::size_type maxlen = 0;       // the length of the longest name
 
@@ -40,11 +44,12 @@ int main() {
 	}
 
 	// alphabetize the student records
-	students.sort(compare);
+	// students.sort(compare);
+	sort(students.begin(), students.end(), compare);
 	extract_fails(students);
 
 	// write the names and grades
-	list<Student_info>::iterator iter = students.begin();
+	vector<Student_info>::iterator iter = students.begin();
 	while (iter != students.end()) {
 		// write the name, padded on the right to maxlen + 1 characters
 		cout << iter->name
@@ -69,18 +74,16 @@ bool fgrade(const Student_info& s) {
 	return grade(s) < 60;
 }
 
-// version 3: iterators but no indexing; still potentially slow
-vector<Student_info> extract_fails(vector<Student_info>& students) {
-	vector<Student_info> fail;
-	vector<Student_info>::iterator iter = students.begin();
-	while (iter != students.end()) {
-		if (fgrade(*iter)) {
-			fail.push_back(*iter);
-			iter = students.erase(iter);
-		} else
-			++iter;
-		}
+// predicate that inverts the result of calling fgrade 
+bool pgrade(const Student_info& s) {
+	return !fgrade(s);
+}
 
+// version 3.2: use stable_partition function to rearrange the elements
+vector<Student_info> extract_fails(vector<Student_info>& students) {
+	vector<Student_info>::iterator iter = stable_partition(students.begin(), students.end(), pgrade);
+	vector<Student_info> fail(iter, students.end());
+	students.erase(iter, students.end());
 	return fail;
 }
 
@@ -97,4 +100,34 @@ list<Student_info> extract_fails(list<Student_info>& students) {
 	}
 
 	return fail;
+}
+
+int alt_main() {
+	// students who did and didn't do all their homework
+	vector<Student_info> did, didnt;
+
+	// read the student records and partition them
+	Student_info student;
+	while (read(cin, student)) {
+		if (did_all_hw(student))
+			did.push_back(student);
+		else
+			didnt.push_back(student);
+	}
+
+	// verify that the analyses will show us something
+	if (did.empty()) {
+		cout << "No student did all the homework" << endl;
+		return 1;
+	}
+	if (didnt.empty()) {
+		cout << "Every student did all the homework" << endl;
+		return 1;
+	}
+
+	// do the analyses
+	write_analysis(cout, "median", median_analysis, did, didnt);
+	write_analysis(cout, "average", average_analysis, did, didnt);
+	write_analysis(cout, "median of homework turned in", optimistic_median_analysis, did, didnt);
+	return 0;
 }
